@@ -41,8 +41,12 @@ async function run() {
     })
     app.get('/product/:id', async (req, res) => {
       const id = req.params.id;
-      const result = await productsCollection.findOne({ _id: new ObjectId(id) });
-      res.send(result)
+      const mainProduct = await productsCollection.findOne({ _id: new ObjectId(id) });
+       // Fetch related products based on the relationships defined in your database
+    const relatedProducts = await productsCollection.find({ category: mainProduct.category }).toArray();
+
+    res.json({ mainProduct, relatedProducts });
+      
     })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
