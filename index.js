@@ -1,16 +1,16 @@
-const express= require('express');
-const app= express();
+const express = require('express');
+const app = express();
 require('dotenv').config();
-const cors= require('cors');
-const jwt =require('jsonwebtoken');
+const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const port= process.env.PORT || 5000;
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const port = process.env.PORT || 5000;
 // middleware
-const corsOptions={
-    origin:['http://localhost:5173','http://localhost:5174'],
-    credentials:true,
-    optionSuccessStatus:200
+const corsOptions = {
+  origin: ['http://localhost:5173', 'http://localhost:5174'],
+  credentials: true,
+  optionSuccessStatus: 200
 }
 app.use(cors(corsOptions))
 app.use(express.json());
@@ -31,7 +31,19 @@ const client = new MongoClient(process.env.DB_URL, {
 
 async function run() {
   try {
-    
+    const productsCollection = client.db('Shopsy').collection('products');
+
+
+
+    app.get('/products', async (req, res) => {
+      const result = await productsCollection.find().toArray();
+      res.send(result)
+    })
+    app.get('/product/:id', async (req, res) => {
+      const id = req.params.id;
+      const result = await productsCollection.findOne({ _id: new ObjectId(id) });
+      res.send(result)
+    })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -43,9 +55,9 @@ async function run() {
 run().catch(console.dir);
 
 
-app.get('/',(req,res)=>{
-    res.send('hello shopsy')
+app.get('/', (req, res) => {
+  res.send('Hello Shopsy')
 })
-app.listen(port,()=>{
-    console.log(`Shopsy is running on port ${port}`);
+app.listen(port, () => {
+  console.log(`Shopsy is running on port ${port}`);
 })
