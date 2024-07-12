@@ -8,7 +8,10 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 // middleware
 const corsOptions = {
-  origin: ['http://localhost:5173', 'http://localhost:5174'],
+  origin:
+  // [
+  //   'https://shopsy-22222.web.app',"https://shopsy-22222.firebaseapp.com/"],
+  ['http://localhost:5173', 'http://localhost:5174'],
   credentials: true,
   optionSuccessStatus: 200
 }
